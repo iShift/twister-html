@@ -4,9 +4,10 @@
 // uses Polyglot.js ( https://github.com/airbnb/polyglot.js ) to translate interface
 
 // translators: add your language code here such as "es" for Spanish, "ru" for Russian
-var knownLanguages = ["en","es","nl","it","fr","ru","de","zh","ja","pt-BR","tr","uk"];
+var knownLanguages = ["en","es","nl","it","fr","ru","de","zh","ja","pt-BR","tr","uk"], preferredLanguage;
 
-if( $.Options.getOption('locLang','auto') == 'auto'){
+if(!localStorage['locLang'] || localStorage['locLang'] == 'auto'){
+  if(!localStorage['locLang']) localStorage['locLang'] = 'auto';
   // detect language with JavaScript
   preferredLanguage = window.navigator.userLanguage || window.navigator.language || "en";
   if(knownLanguages.indexOf(preferredLanguage) > -1){
@@ -22,7 +23,7 @@ if( $.Options.getOption('locLang','auto') == 'auto'){
     preferredLanguage = "en";
   }
 }else{
-  preferredLanguage = $.Options.getOption('locLang','en');
+  preferredLanguage = localStorage['locLang'];
 }
 // set up Polyglot
 polyglot = new Polyglot();
@@ -53,6 +54,7 @@ if(preferredLanguage == "en"){
       "DHT network down.": "DHT network down.",
       "Direct Messages": "Direct Messages",
       "Disable": "Disable",
+      "Display GIF images": "Display GIF images",
       "Display mentions to @": "Display mentions to @",
       "Display retransmissions": "Display retransmissions",
       "DNS to obtain list of peers:": "DNS to obtain list of peers:",
@@ -78,9 +80,12 @@ if(preferredLanguage == "en"){
       "Generate blocks (send promoted messages)": "Generate blocks (send promoted messages)",
       "Home": "Home", // homepage
       "hours": "%{smart_count} hour |||| %{smart_count} hours",
+      "Inline image preview": "Inline image preview",
       "Internal error: lastPostId unknown (following yourself may fix!)": "Internal error: lastPostId unknown (following yourself may fix!)",
+      "Keys":"Keys",
       "Known peers:": "Known peers: ",
       "Last block is ahead of your computer time, check your clock.": "Last block is ahead of your computer time, check your clock.",
+      "Mentions": "Mentions",
       "mentions_at": "Mentions @%{user}",
       "minutes": "%{smart_count} minute |||| %{smart_count} minutes",
       "Must be 16 characters or less.": "Must be 16 characters or less.", // username
@@ -102,6 +107,7 @@ if(preferredLanguage == "en"){
       "post": "post", // verb - button to post a message
       "Post to promote:": "Post to promote: ",
       "Posts": "Posts",
+      "Promoted posts are needed to run the network infrastructure. If you want to help, start generating blocks and advertise. [en]": "Promoted posts are needed to run the network infrastructure. If you want to help, start generating blocks and advertise. [en]",
       "propagating_nickname": "Propagating nickname %{username} to the network...",
       "Public": "Public",
       "Refresh": "Refresh",
@@ -111,25 +117,30 @@ if(preferredLanguage == "en"){
       "reply_to": "Reply to %{fullname}",
       "Retransmit": "Retransmit",
       "Retransmits": "Retransmits",
-      "Retransmitted by": "Retransmitted by",
       "search": "search",
       "seconds": "%{smart_count} second |||| %{smart_count} seconds",
       "send": "send",
+      "Send key":"Send key",
       "Send post with username": "Send post with username ",
       "Sent Direct Message": "Sent Direct Message",
       "Sent Post to @": "Sent Post to @",
       "Setup account": "Setup account",
+      "Sound notifications": "Sound notifications",
+      "Show QR code":"Show QR code",
       "switch_to_network": "Local daemon is not connected to the network or\n" +
                 "block chain is outdated. If you stay in this page\n" +
                 "your actions may not work.\n" +
                 "Do you want to check Network Status page instead?",
       "The File APIs are not fully supported in this browser.": "The File APIs are not fully supported in this browser.",
+      "Theme": "Theme",
       "time_ago": "%{time} ago", // 5 minutes ago
       "Time of the last block:": "Time of the last block: ",
+      "twisted again by": "twisted again by ",
       "Type message here": "Type message here",
       "Unfollow": "Unfollow",
       "Update": "Update",
       "Updating status...": "Updating status...", // status of block chain
+      "Use language": "Use language",
       "user_not_yet_accepted": "Other peers have not yet accepted this new user.\n" +
                 "Unfortunately it is not possible to save profile\n" +
                 "or send any posts in this state.\n\n" +
@@ -165,18 +176,10 @@ if(preferredLanguage == "en"){
       "Terminate Daemon:": "Terminate Daemon:",
       "Exit": "Exit",
       "Save Changes": "Save Changes",
-      "Secret key:": "Secret key:",
-      "You have to log in to post messages.": "You have to log in to post messages.",
-      "You have to log in to post replies.": "You have to log in to post replies.",
-      "You have to log in to retransmit messages.": "You have to log in to retransmit messages.",
-      "You have to log in to use direct messages.": "You have to log in to use direct messages.",
-      "You have to log in to follow users.": "You have to log in to follow users.",
-      "You are not following anyone because you are not logged in.": "You are not following anyone because you are not logged in.",
-      "You don't have any followers because you are not logged in.": "You don't have any followers because you are not logged in.",      
-      "No one can mention you because you are not logged in.": "No one can mention you because you are not logged in.",
-      "You don't have any profile because you are not logged in.": "You don't have any profile because you are not logged in."
+      "Secret key:": "Secret key:"
     };
 }
+
 if(preferredLanguage == "es"){
     polyglot.locale("es");
     wordset = {
@@ -1047,19 +1050,20 @@ if(preferredLanguage == "ru"){
        "Available": "Доступно", // username is available
        "Block chain information": "Информация цепочки блоков",
        "Block chain is up-to-date, twister is ready to use!": "Цепочка блоков обновлена, twister готов к использованию!",
-       "Block generation": "Майнинг блоков ",
+       "Block generation": "Генерация блоков ",
        "Cancel": "Отменить",
        "Change user": "Сменить пользователя",
        "Checking...": "Проверка...", // checking if username is available
        "Collapse": "Свернуть", // smaller view of a post
-       "Configure block generation": "Настройка майнинга",
+       "Configure block generation": "Настройка генерации блоков",
        "Connections:": "Соединений: ", // to network
        "Connection lost.": "Соединение с сетью было потеряно.",
        "days": "%{smart_count} день |||| %{smart_count} дней",
        "Detailed information": "Подробная информация",
        "DHT network down.": "Недоступна DHT сеть.",
-       "Direct Messages": "Личные сообщения",
+       "Direct Messages": "ЛС",
        "Disable": "Отключено",
+       "Display GIF images": "Отображать GIF изображения",
        "Display mentions to @": "Показать ответы для @",
        "Display retransmissions": "Показать репосты",
        "DNS to obtain list of peers:": "DNS адрес для получения пиров:",
@@ -1079,15 +1083,18 @@ if(preferredLanguage == "ru"){
        "followed_by": "%{username} подписан",
        "Followers": "Читателей",
        "Following": "Читаемых",
-       "Following users": "Подписанные пользователи",
+       "Following users": "Читаемые пользователи",
        "Force connection to peer:": "Принудительно подключиться к пиру:",
        "General information": "Основное",
-       "Generate blocks (send promoted messages)": "Майнинг (отправка рекламных сообщений)",
+       "Generate blocks (send promoted messages)": "Генерация блоков (отправка рекламных сообщений)",
        "Home": "Главная", // homepage
        "hours": "%{smart_count} час |||| %{smart_count} часов",
+       "Inline image preview": "Отображать изображения в посте",
        "Internal error: lastPostId unknown (following yourself may fix!)": "Внутренняя ошибка: lastPostId неизвестен (Попробуйте подписаться сами на себя, это должно помочь!)",
+       "Keys":"Клавиши",
        "Known peers:": "Известные пиры: ",
        "Last block is ahead of your computer time, check your clock.": "Последний полученный блок опережает время вашего компьютера, проверьте правильно ли работают часы.",
+       "Mentions": "Упоминания",
        "mentions_at": "Упоминания @%{user}",
        "minutes": "%{smart_count} минута |||| %{smart_count} минут",
        "Must be 16 characters or less.": "Должно быть не более 16 знаков.", // username
@@ -1102,6 +1109,7 @@ if(preferredLanguage == "ru"){
        "Number of blocks in block chain:": "Количество блоков в цепочке: ",
        "Number of CPUs to use": "Сколько использовать ядер процессора",
        "Only alphanumeric and underscore allowed.": "Разрешены только латинские буквы, цифры и подчеркивания.",
+       "Options": "Опции",
        "peer address": "адрес пира",
        "Private": "Приватный",
        "Profile": "Профиль",
@@ -1109,6 +1117,7 @@ if(preferredLanguage == "ru"){
        "post": "отправить", // verb - button to post a message
        "Post to promote:": "Рекламное сообщение: ",
        "Posts": "Посты",
+       "Promoted posts are needed to run the network infrastructure. If you want to help, start generating blocks and advertise. [en]": "Рекламные сообщения нужны для того, чтобы поддерживать инфраструктуру сети. Если вы хотите помочь, то включите генерацию блоков и распространяйте информацию о сети. [ru]",
        "propagating_nickname": "Распространяю информацию о регистрации %{username} в сеть...",
        "Public": "Публичный",
        "Refresh": "Обновить",
@@ -1118,57 +1127,62 @@ if(preferredLanguage == "ru"){
        "reply_to": "Ответить %{fullname}",
        "Retransmit": "Перепостить",
        "Retransmits": "Репосты",
-       "Retransmitted by": "Перепощено ",
+       "twisted again by": "Перепостил ",
        "search": "поиск",
        "seconds": "%{smart_count} секунда |||| %{smart_count} секунд",
        "send": "отправить",
+       "Send key":"Клавиша отправки",
        "Send post with username": "Отправить сообщение от имени",
        "Sent Direct Message": "Отправить личное сообщение",
        "Sent Post to @": "Отправить сообщение для @",      
        "Setup account": "Настроить аккаунт",
-       "Switch to Promoted posts": "Отображать только рекламные сообщения",
+       "Sound notifications": "Звуковые уведомления",
+       "Show QR code":"Показать QR код",
        "switch_to_network": "Локальный демон не подключен к сети или\n" +
-                 "цепочка блоков устарела. Если вы останетесь на этой странице\n" +
+                 "цепочка блоков устарела. Если вы останитесь на этой странице\n" +
                  "ваши действия могут быть не выполнены.\n" +
                  "Не хотите перейти на страницу настройки сети?",
        "The File APIs are not fully supported in this browser.": "File APIs не полностью поддерживается этим браузером.",
+       "Theme": "Тема оформления",
        "time_ago": "%{time} назад", // 5 minutes ago
        "Time of the last block:": "Время последнего блока: ",
-       "Type message here": "Введите ваше сообщение тут",
+       "Top Trends": "Тенденции",
+       "Type message here": "Введите здесь ваше сообщение",
        "Unfollow": "Отписаться",
        "Update": "Обновить",
        "Updating status...": "Обновление информации...", // status of block chain
+       "Use language": "Использовать язык",
        "user_not_yet_accepted": "Другие участники сети еще не получили информацию о новом пользователе.\n" +
                  "К сожалению, сейчас вы не можете редактировать ваш профиль\n" +
                  "или отправлять сообщение.\n\n" +
                  "Пожалуйста подождите пару минут.\n\n" +
-                 "Кнопка 'Сохранить' будет доступна автоматически после того,\n" +
-                 "как процес регистрации завершится. (Я обещаю, это\n"+
+                 "Кнопка 'Сохранить' будет доступна автоматически того,\n" +
+                 "когда процес регистрации завершится. (Я обещаю, это\n"+
                  "последний раз, когда вы ждете перед использованием\n" +
                  "twister'a).\n\n" +
                  "Хозяйке на заметку: Сейчас вы можете выбрать аватар!",
        "users_mentions": "Ответ от @%{username}",
-       "users_profile": "%{username}'s профиль",
+       "users_profile": "Профиль пользователя %{username}",
        "username_undefined": "Имя пользователя не определено, требуется войти.",
        "View": "Просмотреть",
-       "View All": "Просмотреть Всё",
+       "View All": "Просмотреть всё",
        "Who to Follow": "Кого почитать",
-       "Your message was sent!": "Ваше сообщение было отправлено!",
+       "Your message was sent!": "Ваше сообщение отправлено!",
        "twister login": "Вход в twister",
-       "Existing local users": "Уже зарегистрированные",
+       "Existing local users": "Предыдущие аккаунты",
        "Or...": "Или...",
-       "Create a new user": "Зарегистрировать нового пользователя",
+       "Create a new user": "Создать новый аккаунт",
        "Login": "Войти",
-       "Check availability": "Проверить на доступность",
-       "Create this nickname": "Зарегистировать этот ник",
-       "Type nickname here": "Введите ваш ник тут",
+       "Check availability": "Проверить, занят ли ник",
+       "Create this nickname": "Создать аккаунт",
+       "Type nickname here": "Введите ник",
        "Import secret key": "Импортировать секретный ключ",
        "52-characters secret": "52-значный ключ",
        "With nickname": "С логином",
        "Import key": "Импортировать ключ",
        "Client Version:": "Версия клиента:",
-       "Mining difficulty:": "Сложность майнинга:",
-       "Block generation status": "Статус майнинга блоков",
+       "Mining difficulty:": "Сложность генерации:",
+       "Block generation status": "Статус генерации блоков",
        "Current hash rate:": "Текущая скорость хэширования:",
        "Terminate Daemon:": "Остановить twister:",
        "Exit": "Выход",
@@ -1628,8 +1642,8 @@ if(preferredLanguage == "tr"){
       "DHT network down.": "DHT ağı çalışmıyor.",
       "Direct Messages": "Direk Mesajlar",
       "Disable": "Kullanılmaz",
-      "Display mentions to @": "@ adının geçtiği gönderiler",
-      "Display retransmissions": "Tekrar iletimleri göster",
+      "Display mentions to @": "@ 'dan bahsedilen twistler",
+      "Display retransmissions": "Tekrar iltimleri göster",
       "DNS to obtain list of peers:": "Eş listesini almak için DNS:",
       "downloading_block_chain": "Blok zinciri indiriliyor, devam edebilmek için lütfen bekleyiniz (blok zinciri %{days} günlük).",
       "download_posts_status": "Göderilerin indirilme oranı: %{portion}", // Downloaded 10/30 posts
@@ -1691,8 +1705,8 @@ if(preferredLanguage == "tr"){
       "seconds": "%{smart_count} saniye |||| %{smart_count} saniye",
       "send": "gönder",
       "Send post with username": "İletiyi kullanıcı adıyla gönder ",
-      "Sent Direct Message": "Direk Mesaj Gönder",
-      "Sent Post to @": "@ Kullanıcıya Gönder",
+      "Sent Direct Message": "Gönderilen Direk Mesaj",
+      "Sent Post to @": "Kullanıcıya gönder @",
       "Setup account": "Hesap ayarları",
       "switch_to_network": "Yerel servis ağa bağlı değil ya da\n" +
                 "blok zinciri güncel değil. Eğer bu sayfada kalırsanız\n" +
@@ -1739,10 +1753,7 @@ if(preferredLanguage == "tr"){
       "Terminate Daemon:": "Servisi Durdur:",
       "Exit": "Çıkış",
       "Save Changes": "Değişiklikleri Kaydet",
-      "Secret key:": "Gizli anahtar:",
-      "Options": "Ayarlar",
-      "Switch to Promoted posts": "Destekli Mesajlara Geç",
-      "Switch to Normal posts": "Normal Mesajlara Geç"
+      "Secret key:": "Gizli anahtar:"
     };
 }
 
@@ -1773,6 +1784,12 @@ var fixedLabels = [
   ".post-context span",
   ".post-stats .stat-count span",
   ".postboard span",
+  ".module.toptrends h3",
+
+  //options page
+  ".module h1",
+  ".module h2",
+  ".module label span",
 
   // following page
   ".following h2",

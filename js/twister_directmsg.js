@@ -126,11 +126,6 @@ function newDirectMsg(msg,  dm_screenname) {
 //dispara o modal de direct messages
 function directMessagesPopup()
 {
-    if(!defaultScreenName)
-    {
-      alert(polyglot.t("You have to log in to use direct messages."));
-      return;
-    }
     var directMessagesClass = "directMessages";
     openModal( directMessagesClass );
 
@@ -156,19 +151,17 @@ function hideDmSnippetShowDmThread()
 
     var dm_screenname = $this.attr("data-dm-screen-name");
     openDmWithUserModal(dm_screenname);
+
+    $(".modal-content").css("height", "300px"); //fix
 }
 
 
 function directMessagesWithUserPopup()
 {
-    if(!defaultScreenName)
-    {
-      alert(polyglot.t("You have to log in to use direct messages."));
-      return;
-    }
     var $userInfo = $(this).closest("[data-screen-name]");
     var dm_screenname = $userInfo.attr("data-screen-name");
     openDmWithUserModal( dm_screenname );
+    $(".modal-content").css("height", "300px"); //fix
 }
 
 function openDmWithUserModal(dm_screenname)

@@ -1,6 +1,5 @@
 $(function(){
 	$('.dropdown-menu').on('keydown', function(e){
-		e = event || window.event;
 		e.stopPropagation();
 	})
 	$('.post-text').on('click', 'a', function(e){
@@ -76,17 +75,16 @@ function mensAutocomplete() {
 
 function changeStyle() {
 	var style, profile, menu;
-	var theme = $.Options.getTheme();
-	if(theme == 'original')
+	if(localStorage['theme'] == 'original')
 	{
-		style = 'css/style.css';
-		profile = 'css/profile.css';
+		style = 'css/orange/style.css';
+		profile = 'css/orange/profile.css';
 		menu = '.original_menu';
 		$(".userMenu-dhtindicator").hide();
 	}else 
 	{
-		style = 'theme_calm/css/style.css';
-		profile = 'theme_calm/css/profile.css';
+		style = 'css/style.css';
+		profile = 'css/profile.css';
 		menu = '.calm_menu';
 	}
 	$('#stylecss').attr('href', style);

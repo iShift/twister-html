@@ -90,14 +90,7 @@ function postToElem( post, kind ) {
             replyTo += "@" + mentions[i] + " ";
         }
     }
-    if(!defaultScreenName)
-    {
-	elem.find(".post-area-new textarea").attr("placeholder", polyglot.t("You have to log in to post replies."));
-    }
-    else
-    {
-	elem.find(".post-area-new textarea").attr("placeholder", polyglot.t("reply_to", { fullname: replyTo })+ "...");
-    }
+    elem.find(".post-area-new textarea").attr("placeholder", polyglot.t("reply_to", { fullname: replyTo })+ "...");
     elem.find(".post-area-new textarea").attr("data-reply-to",replyTo);
     postData.attr("data-reply-to",replyTo);
 
@@ -107,6 +100,14 @@ function postToElem( post, kind ) {
         retweetedByElem.attr("href", $.MAL.userUrl(retweeted_by));
         retweetedByElem.text('@'+retweeted_by);
     }
+    //hed//image in post
+    var previewContainer = elem.find('.preview-container'), postText = elem.find(".post-text");
+    
+    if(imagePreview(postText)){
+        previewContainer.show();
+        previewContainer.append(imagePreview(postText))
+    };
+    
 
     return elem;
 }
@@ -118,7 +119,7 @@ function dmDataToSnippetItem(dmData, remoteUser) {
     dmItem.attr("data-dm-screen-name",remoteUser);
     dmItem.attr("data-last_id", dmData.id);
     dmItem.attr("data-time", dmData.time);
-
+    
     dmItem.find(".post-info-tag").text("@" + remoteUser);
     dmItem.find("a.post-info-name").attr("href", $.MAL.userUrl(remoteUser));
     dmItem.find("a.dm-chat-link").attr("href", $.MAL.dmchatUrl(remoteUser));
@@ -196,7 +197,7 @@ function htmlFormatMsg( msg, output, mentions ) {
                     var extLinkTemplate = $("#external-page-link-template").clone(true);
                     extLinkTemplate.removeAttr("id");
                     extLinkTemplate.attr("href",url);
-                    extLinkTemplate.text(url);
+                    extLinkTemplate.html(url);
                     extLinkTemplate.attr("title",url);
                     output.append(extLinkTemplate);
                     continue;
@@ -213,7 +214,7 @@ function htmlFormatMsg( msg, output, mentions ) {
                     var extLinkTemplate = $("#external-page-link-template").clone(true);
                     extLinkTemplate.removeAttr("id");
                     extLinkTemplate.attr("href","mailto:" + email);
-                    extLinkTemplate.text(email);
+                    extLinkTemplate.html(email);
                     extLinkTemplate.attr("title",email);
                     output.append(extLinkTemplate);
                     msg = tmp.substr(String(email).length);
@@ -246,6 +247,7 @@ function htmlFormatMsg( msg, output, mentions ) {
         }
 
         output.append(_formatText(msg));
+
         msg = "";
     }
 }
@@ -253,10 +255,9 @@ function htmlFormatMsg( msg, output, mentions ) {
 // internal function for htmlFormatMsg
 function _formatText(msg)
 {
-    // TODO: add options for emotions and linefeeds
-    //msg = $.emotions(msg);
-    if( $.Options.getLineFeedsOpt() == "enable" )
-        msg = msg.replace(/\n/g, '<br />');
+    msg = $.emotions(msg);
+    msg = msg.replace(/\n/g, '<br />');
+
     return msg;
 }
 
@@ -292,4 +293,19 @@ function _extractHashtag(s) {
 function escapeHtmlEntities(str) {
     return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&apos;');
 }
-
+function imagePreview(post) {
+    if (localStorage['showPreviewOpt'] == 'enable') {
+        var link = post.find("a[rel='nofollow']");
+        var linkAnon = 'https://ssl-proxy.my-addr.org/myaddrproxy.php/http/';
+        if (link.html() && /(\.jpg)|(\.gif)|(\.png)|(\.jpeg)|(\.jpe)/.test(link.html().toLowerCase()))
+        {
+            var cleanLink = link.html().replace(/^http[s]?:\/\//i, '');
+            if(/\.gif\b/i.test(cleanLink) && localStorage['showPreviewOptGif'] == 'false') return;
+            return "<img src='"+linkAnon+cleanLink+"' class='image-preview' />";
+        } else if (link.html() && /https:\/\/img.bi/.test(link.html().toLowerCase()))
+        {
+            return "<img data-imgbi='" + link.html() + "' class='image-preview' />";
+            // imgBiJS();
+        }
+    }
+}

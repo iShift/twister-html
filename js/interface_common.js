@@ -5,8 +5,6 @@
 // Profile, mentions and hashtag modal
 // Post actions: submit, count characters
 
-var preventSlide = false;
-
 //dispara o modal genérico
 //o modalClass me permite fazer tratamentos específicos de CSS para cada modal
 function openModal( modalClass )
@@ -105,12 +103,6 @@ function openProfileModal(e)
 
     var $this = $( this );
     var username = $.MAL.urlToUser( $this.attr("href") );
-    
-    if(!username)
-    {
-	alert(polyglot.t("You don't have any profile because you are not logged in."));
-	return;
-    }
 
     var profileModalClass = "profile-modal";
     openModal( profileModalClass );
@@ -127,6 +119,18 @@ function openProfileModal(e)
             unfollow(username);
         });
     };
+    $mc = $('.modal-content');
+//    $mch = parseInt($('.modal-content').css('height'));//
+//    $pch = parseInt($('.profile-card').css('height'));//
+//    $mc.css('height', $mch - ($pch + Math.floor($mch/50)));//hed//fix .modal-content height
+
+    $mc.off('profileloaded');
+    $mc.on('profileloaded', function() {
+        var viewHeader = $mc.find(".postboard > h2");
+        var h = viewHeader.offset().top + viewHeader.outerHeight() - $mc.parent().offset().top + 5;
+        $mc.find(".postboard-posts").css('border-top', parseInt(h, 10) + "px solid transparent");
+    });
+    $mc.trigger('profileloaded');
 }
 
 function newHashtagModal(hashtag) {
@@ -148,7 +152,7 @@ function openHashtagModal(e)
     e.preventDefault();
 
     var $this = $( this );
-    var hashtag = $this.text().substring(1).toLowerCase();
+    var hashtag = $this.text().substring(1);
 
     var hashtagModalClass = "hashtag-modal";
     openModal( hashtagModalClass );
@@ -177,11 +181,6 @@ function openMentionsModal(e)
     e.stopPropagation();
     e.preventDefault();
 
-    if(!defaultScreenName)
-    {
-	alert(polyglot.t("No one can mention you because you are not logged in."));
-	return;
-    }
     // reuse the same hashtag modal to show mentions
     var hashtagModalClass = "hashtag-modal";
     openModal( hashtagModalClass );
@@ -237,13 +236,6 @@ function openFollowingModal(e)
 //dispara o modal de retweet
 var reTwistPopup = function( e )
 {
-    if(!defaultScreenName)
-    {
-	preventSlide=true;
-	alert(polyglot.t("You have to log in to retransmit messages."));
-	return;
-    }
-    
     var reTwistClass = "reTwist";
     openModal( reTwistClass );
 
@@ -316,15 +308,7 @@ var postExpandFunction = function( e, postLi )
     var $postsRelated = postLi.find(".related");
 
     var openClass = "open";
-    
-    //This is used in "guest mode", when user gets an alert that he can't reply or retransmit
-    //when not logged in. Otherwise, this click would also be understood as a command to open/close
-    //the post, which would look weird.
-    if(preventSlide)
-    {
-	preventSlide=false;
-    }
-    else if( !postLi.hasClass( openClass ) ) {
+    if( !postLi.hasClass( openClass ) ) {
         originalPost.detach();
         postLi.empty();
         postLi.addClass( openClass );
@@ -335,26 +319,16 @@ var postExpandFunction = function( e, postLi )
         originalLi.append(originalPost);
 
         $postExpandedContent.slideDown( "fast" );
-        
-        if ($.Options.getShowPreviewOpt() == 'enable')
-        {
-            var previewContainer=$postExpandedContent.find(".preview-container")[0];
-            /* was the preview added before... */
-            if ($(previewContainer).children().length == 0)
-            {
-                var link = originalPost.find("a[rel='nofollow']");
-                if (/(\.jpg)|(\.gif)|(\.png)|(\.jpeg)/.test(link.html().toLowerCase()))
-                {
-                    $(previewContainer).append($("<img src='" + link.html() + "' class='image-preview' />"));
-                }
-            }
-        }
+
         // insert "reply_to" before
         requestRepliedBefore(originalLi);
         // insert replies to this post after
         requestRepliesAfter(originalLi);
         // RTs faces and counter
         requestRTs(originalLi);
+
+        //hed//image preview 
+        postLi.find('.preview-container').css('height', '100%');
     }
     else
     {
@@ -368,6 +342,7 @@ var postExpandFunction = function( e, postLi )
             postLi.empty();
             postLi.append(originalPost);
         });
+        postLi.find('.preview-container').css('height', '')
     }
 
     e.stopPropagation();
@@ -375,12 +350,6 @@ var postExpandFunction = function( e, postLi )
 
 var postReplyClick = function( e )
 {
-    if(!defaultScreenName)
-    {
-	preventSlide=true;
-	alert(polyglot.t("You have to log in to post replies."));
-	return;
-    }
     var post = $(this).closest(".post");
     if( !post.hasClass( "original" ) ) {
         replyInitPopup(e, post);
@@ -439,14 +408,14 @@ function replyTextKeypress(e) {
             $.MAL.disableButton(tweetAction);
         }
 
-        if( $.Options.keyEnterToSend() && $('.dropdown-menu').css('display') == 'none'){
+        if(localStorage['keysSend'] == 1 && $('.dropdown-menu').css('display') == 'none'){
             if (e.keyCode === 13 && (!e.metaKey && !e.ctrlKey)) {
                 $this.val($this.val().trim());
                 if( !tweetAction.hasClass("disabled")) {
                     tweetAction.click();
                 }
             }
-        }else if( !$.Options.keyEnterToSend() ){
+        }else if(localStorage['keysSend'] == 2){
             if (e.keyCode === 13 && (e.metaKey || e.ctrlKey)) {
                 
                 $this.val($this.val().trim());
@@ -479,11 +448,11 @@ var postSubmit = function(e)
     var remainingCount = tweetForm.find(".post-area-remaining");
     remainingCount.text(140);
     $replyText.attr("placeholder", "Your message was sent!");
-    closeModal($this);
+
     if($this.closest('.post-area,.post-reply-content')){
         $('.post-area-new').removeClass('open').find('textarea').blur();
     };
-    setTimeout('requestTimelineUpdate("latest",postsPerRefresh,followingUsers,promotedPostsOnly)', 1000);
+    setTimeout('requestTimelineUpdate("latest",postsPerRefresh,followingUsers,promotedPostsOnly)', 2000);
 }
 
 

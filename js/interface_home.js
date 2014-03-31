@@ -17,7 +17,8 @@ var InterfaceFunctions = function()
             requestTimelineUpdate("latest",postsPerRefresh,followingUsers,promotedPostsOnly);});
         $( ".promoted-posts-only").click(function() {
             promotedPostsOnly = !promotedPostsOnly;
-            $(this).text( promotedPostsOnly ? "Switch to Normal posts" : "Switch to Promoted posts" );
+            $(this).text( promotedPostsOnly ? "Promoted posts" : "Normal posts" );
+            $(".postboard h2").animate({backgroundColor: promotedPostsOnly ? '#48577d' : '#768fce'}, 200);
             timelineChangedUser();
             $.MAL.getStreamPostsParent().empty();
             requestTimelineUpdate("latestFirstTime",postsPerRefresh,followingUsers,promotedPostsOnly);
@@ -31,56 +32,24 @@ var InterfaceFunctions = function()
     }
 
     function initHome(cbFunc, cbArg) {
+        if( !defaultScreenName ) {
+            alert(polyglot.t("username_undefined"));
+            $.MAL.goLogin();
+            return;
+        }
         checkNetworkStatusAndAskRedirect();
 
         //$("span.screen-name").text('@' + user);
         var $miniProfile = $(".mini-profile");
-        if(!defaultScreenName)
-        {
-            $(".userMenu-profile > a").text(polyglot.t("Login"));
-            $(".userMenu-profile > a").attr("href","login.html");
-            $(".post-area-new > textarea").attr("placeholder",polyglot.t("You have to log in to post messages."));
-            $(".post-area-new > textarea").attr("disabled","true");
-            $miniProfile.find(".mini-profile-name").text("guest");
-            $miniProfile.find(".posts-count").text("0");
-            $miniProfile.find(".following-count").text("0");
-            $miniProfile.find(".followers-count").text("0");
-            $miniProfile.find("a.open-following-page").attr("href","#");
-            $miniProfile.find("a.open-following-page").bind("click", function()
-            { alert(polyglot.t("You are not following anyone because you are not logged in."))} );
-            $miniProfile.find("a.open-followers").bind("click", function()
-            { alert(polyglot.t("You don't have any followers because you are not logged in."))} );
-            $(".dropdown-menu-following").attr("href","#");
-            $(".dropdown-menu-following").bind("click", function()
-            { alert(polyglot.t("You are not following anyone because you are not logged in."))} );
-            twisterRpc("gettrendinghashtags", [10],
-                                function(args, ret) {
-                                    for( var i = 0; i < ret.length; i++ ) {
-                                    
-                                       var $li = $("<li>");
-                                       var hashtagLinkTemplate = $("#hashtag-link-template").clone(true);
-                                       hashtagLinkTemplate.removeAttr("id");
-                                       hashtagLinkTemplate.attr("href",$.MAL.hashtagUrl(ret[i]));
-                                       hashtagLinkTemplate.text("#"+ret[i]);
-                                       $li.append(hashtagLinkTemplate);
-                                       $(".toptrends-list").append($li);
-                                    }
-                                }, {},
-                                function(args, ret) {
-                                   console.log("Error with gettrendinghashtags. Older twister daemon?");
-                                }, {});	    
-        }
-        else
-        {
-            $miniProfile.find("a.mini-profile-name").attr("href",$.MAL.userUrl(defaultScreenName));
-            $miniProfile.find("a.open-profile-modal").attr("href",$.MAL.userUrl(defaultScreenName));
-            $miniProfile.find(".mini-profile-name").text(defaultScreenName);
-            getFullname( defaultScreenName, $miniProfile.find(".mini-profile-name") );
-            getAvatar( defaultScreenName, $miniProfile.find(".mini-profile-photo").find("img") );
-            getPostsCount( defaultScreenName,  $miniProfile.find(".posts-count") );
-            getFollowers( defaultScreenName, $miniProfile.find(".followers-count") );
+        $miniProfile.find("a.mini-profile-name").attr("href",$.MAL.userUrl(defaultScreenName));
+        $miniProfile.find("a.open-profile-modal").attr("href",$.MAL.userUrl(defaultScreenName));
+        $miniProfile.find(".mini-profile-name").text(defaultScreenName);
+        getFullname( defaultScreenName, $miniProfile.find(".mini-profile-name") );
+        getAvatar( defaultScreenName, $miniProfile.find(".mini-profile-photo").find("img") );
+        getPostsCount( defaultScreenName,  $miniProfile.find(".posts-count") );
+        getFollowers( defaultScreenName, $miniProfile.find(".followers-count") );
 
-            loadFollowing( function(args) {
+        loadFollowing( function(args) {
                      $(".mini-profile .following-count").text(followingUsers.length-1);
                      requestLastHave();
                      setInterval("requestLastHave()", 1000);
@@ -121,7 +90,6 @@ var InterfaceFunctions = function()
                      if( args.cbFunc )
                         args.cbFunc(args.cbArg);
                  }, {cbFunc:cbFunc, cbArg:cbArg});
-        }
     }
 }
 

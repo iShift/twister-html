@@ -3,13 +3,14 @@
   <head>
     <meta charset="utf-8"/>
     <title>Network status</title>
-    <link id="stylecss" rel="stylesheet" href="css/style.css" type="text/css"/>
+    <link id="stylecss" rel="stylesheet" href="css/style.css">
+    <link id="profilecss" rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="jquery-emotions/jquery.emotions.calm.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/jQueryPlugins.js"></script>
     <script src="js/jquery.json-2.4.js"></script>
     <script src="js/jquery.jsonrpcclient.js"></script>
     <script src="js/jquery.storageapi.js"></script>
-    <script src="js/options.js"></script>
     <script src="js/mobile_abstract.js"></script>
     <script src="js/twister_io.js"></script>
     <script src="js/twister_user.js"></script>
@@ -23,10 +24,7 @@
     <script src="js/calm.js"></script>
 
     <script>
-        $(document).ready(function()
-        {
-           initInterfaceNetwork();
-        });
+        $(document).ready(function(){initInterfaceNetwork()});
         changeStyle();
     </script>
 
@@ -35,7 +33,29 @@
 
   <body>
     
-  <!-- MENU SUPERIOR INIT --> 
+  <!-- MENU SUPERIOR INIT Calm --> 
+ <div style="display:none" class="calm_menu">
+  <nav class="userMenu">
+    <ul>
+        <li class="userMenu-home"><a href="home.html"></a></li>
+        <li class="userMenu-network current"><a href="network.html">Network</a></li>
+        <li class="userMenu-config">
+          <a class="userMenu-config-dropdown" href="#">
+            <div class="config-menu dialog-modal">
+              <a class="dropdown-menu-item" href="options.html">Options</a>
+              <a class="dropdown-menu-item" href="network.html">Network config</a>
+              <a class="dropdown-menu-item" href="profile-edit.html">Setup account</a>
+              <a class="dropdown-menu-item" href="following.html">Following users</a>
+              <a class="dropdown-menu-item" href="login.html">Change user</a>
+           </div>
+          </a>
+        </li>
+    </ul>
+  </nav>
+ </div>
+  <!-- MENU SUPERIOR END CALM-->
+    <!-- MENU SUPERIOR INIT --> 
+ <div style="display:none" class="original_menu">
   <nav class="userMenu">
     <ul>
         <li class="userMenu-home"><a href="home.html">Home</a></li>
@@ -73,7 +93,9 @@
         </li>
     </ul>
   </nav>
+ </div>
   <!-- MENU SUPERIOR END -->
+  
 
   <div class="wrapper">
 

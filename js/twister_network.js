@@ -200,7 +200,7 @@ function getSpamMsg() {
                function(args, ret) {
                    var $postArea = $(".spam-msg");
                    var $localUsersList = $("select.local-usernames.spam-user");
-                   $postArea.val(ret[1]);
+                   $postArea.val(polyglot.t(ret[1]));
                    $localUsersList.val(ret[0]);
                }, {},
                function(args, ret) {
@@ -265,11 +265,6 @@ function initInterfaceNetwork() {
                 initDMsCount();
             });
         }
-        else
-	{
-	    $(".userMenu-profile > a").text(polyglot.t("Login"));
-	    $(".userMenu-profile > a").attr("href","login.html");
-	}
     });
     networkUpdate();
     setInterval("networkUpdate()", 2000);

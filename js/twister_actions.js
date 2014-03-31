@@ -95,8 +95,12 @@ function requestRTs(postLi)
     }
 }
 
+var lastk,
+    profilePostsLoading = false;
+
 function requestPostRecursively(containerToAppend,username,resource,count)
 {
+    profilePostsLoading = true;
     dhtget( username, resource, "s",
             function(args, postFromJson) {
                if( postFromJson ) {
@@ -106,14 +110,16 @@ function requestPostRecursively(containerToAppend,username,resource,count)
                    newStreamPost.slideDown("fast");
                    $.MAL.postboardLoaded();
 
-                   if( args.count > 1 ) {
-                       var userpost = postFromJson["userpost"];
-                       var n = userpost["n"];
-                       var lastk = userpost["lastk"];
-                       if( lastk == undefined )
-                           lastk = userpost["k"] - 1; // not true with directmsgs in stream
+                   var userpost = postFromJson["userpost"];
+                   var n = userpost["n"];
+                   lastk = userpost["lastk"];
+                   if( lastk == undefined )
+                       lastk = userpost["k"] - 1; // not true with directmsgs in stream
 
+                   if( args.count > 1 ) {
                        requestPostRecursively(args.containerToAppend, n, "post"+lastk, count-1);
+                   } else {
+                       profilePostsLoading = false;
                    }
                }
            }, {containerToAppend:containerToAppend, count:count} );
@@ -170,6 +176,8 @@ function updateProfileData(profileModalContent, username) {
     getLocation( username, profileModalContent.find(".profile-location") );
     getWebpage( username, profileModalContent.find(".profile-url") );
     getBio( username, profileModalContent.find(".profile-bio") );
+    getTox( username, profileModalContent.find(".profile-tox") );
+    getBitmessage( username, profileModalContent.find(".profile-bitmessage") );
     getAvatar( username, profileModalContent.find(".profile-card-photo") );
     getPostsCount( username,  profileModalContent.find(".posts-count") );
     getFollowers( username, profileModalContent.find(".followers-count") );
@@ -177,7 +185,16 @@ function updateProfileData(profileModalContent, username) {
     
     profileModalContent.find(".following-count").parent().attr("href", $.MAL.followingUrl(username));
 
-    requestPostRecursively(profileModalContent.find(".postboard-posts"),username,"status",10);
+    var postsView = profileModalContent.find(".postboard-posts");
+    requestPostRecursively(postsView,username,"status",20);
+    postsView.scroll(function(){
+        if (!profilePostsLoading) {
+            var $this = $(this);
+            if ($this.scrollTop() >= this.scrollHeight - $this.height() - 20) {
+                requestPostRecursively($this,username,"post"+lastk,20);
+            }
+        }
+     });
 }
 
 function updateFollowingData(followingModalContent, username) {
@@ -191,6 +208,7 @@ function clearHashtagProcessed() {
 }
 
 function requestHashtag(postboard,hashtag,resource) {
+    if(/[a-z]/i.test(hashtag))hashtag = hashtag.toLowerCase(); //hed//fix english hashtag case dependency bug
     dhtget( hashtag, resource, "m",
            function(args, data) {
                processHashtag(args.postboard, args.hashtag, data);

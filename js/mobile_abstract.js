@@ -257,6 +257,7 @@ var MAL = function()
             if( newDMs ) {
                 $DMsCounter.text(newDMs);
                 $DMsCounter.fadeIn();
+                // DMsNotif();
             } else {
                 $DMsCounter.hide();
             }
@@ -350,21 +351,6 @@ var MAL = function()
             window.location.href = "home.html";
         }
     }
-    
-    this.soundNotifyMentions = function() {
-         if( $.hasOwnProperty("mobile") ) {
-         } else {
-             $.Options.mensNotif();
-         }
-    }
-
-    this.soundNotifyDM = function() {
-         if( $.hasOwnProperty("mobile") ) {
-         } else {
-             $.Options.DMsNotif();
-         }
-    }
-
 }
 
 jQuery.MAL = new MAL;

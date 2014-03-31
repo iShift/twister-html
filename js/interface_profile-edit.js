@@ -22,7 +22,7 @@ function initProfileEdit() {
 
     initUser( function() {
         if( !defaultScreenName ) {
-            alert(polyglot.t("username_undefined"));
+            alert("Username undefined, login required.");
             $.MAL.goLogin();
             return;
         }

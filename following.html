@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8"/>
     <title>Following</title>
-    <link id="stylecss" rel="stylesheet" href="css/style.css" type="text/css"/>
-    <link id="profilecss" rel="stylesheet" href="css/profile.css" type="text/css"/>
+    <link id="stylecss" rel="stylesheet" href="css/style.css">
+    <link id="profilecss" rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="jquery-emotions/jquery.emotions.calm.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/jQueryPlugins.js"></script>
     <script src="js/jquery.json-2.4.js"></script>
     <script src="js/jquery.jsonrpcclient.js"></script>
     <script src="js/jquery.storageapi.js"></script>
-    <script src="js/options.js"></script>
     <script src="js/mobile_abstract.js"></script>
     <script src="js/twister_io.js"></script>
     <script src="js/polyglot.min.js"></script>
@@ -23,14 +23,14 @@
     <script src="js/twister_directmsg.js"></script>
     <script src="js/twister_actions.js"></script>
     <script src="js/interface_common.js"></script>
+    <script src="jquery-emotions/jquery.emotions.js"></script>
+    <script src="js/sjcl.js"></script>
+    <script src="js/img.bi.js"></script>
     <script src="js/calm.js"></script>
 
     <script>
-        $(document).ready(function()
-        {
-           initInterfaceFollowing();
-           changeStyle();
-        });
+    $(document).ready(function(){initInterfaceFollowing()});
+    changeStyle();
     </script>
 
     <link rel="icon" type="image/png" href="img/twister_mini.png" />
@@ -38,7 +38,30 @@
 
   <body>
     
-  <!-- MENU SUPERIOR INIT --> 
+  <!-- MENU SUPERIOR INIT Calm--> 
+ <div style="display:none" class="calm_menu"> 
+  <nav class="userMenu">
+    <ul>
+      <li class="userMenu-home"><a href="home.html"></a></li>
+      <li class="userMenu-following current"><a href="following.html">Following</a></li>
+      <li class="userMenu-config current">
+        <a class="userMenu-config-dropdown" href="#">
+          <div class="config-menu dialog-modal">
+            <a class="dropdown-menu-item" href="options.html">Options</a>
+            <a class="dropdown-menu-item" href="network.html">Network config</a>
+            <a class="dropdown-menu-item" href="profile-edit.html">Setup account</a>
+            <a class="dropdown-menu-item" href="following.html">Following users</a>
+            <a class="dropdown-menu-item" href="login.html">Change user</a>
+          </div>
+        </a>
+      </li>
+      <!-- BUSCA -->
+    </ul>
+  </nav>
+ </div>
+  <!-- MENU SUPERIOR END Calm -->
+ <!-- MENU SUPERIOR INIT Original--> 
+ <div style="display:none" class="original_menu">  
   <nav class="userMenu">
     <ul>
       <li class="userMenu-home"><a href="home.html">Home</a></li>
@@ -52,7 +75,6 @@
               <a href="#" class="mini-profile-name">Fulano da Silva</a>
               <span class="mini-profile-view">View</span>
             </div>
-            <a class="dropdown-menu-item" href="options.html">Options</a>
             <a class="dropdown-menu-item" href="profile-edit.html">Setup account</a>
             <a class="dropdown-menu-item" href="following.html">Following users</a>
             <a class="dropdown-menu-item" href="network.html">Network config</a>
@@ -71,44 +93,13 @@
           <span class="messages-qtd" style="display:none;">12</span>
         </a>
       </li>
-
-      <!-- BUSCA -->
-      <li class="userMenu-search">
-        <input type="text" class="userMenu-search-field" placeholder="search"/>
-
-        <div class="search-results dialog-modal">
-          <ul class="userMenu-search-sugestions" style="display: none;">
-            <li><a href="#">Fulano</a></li>
-            <li><a href="#">Outro Fulano</a></li>
-            <li><a href="#">Mais outro</a></li>
-          </ul>
-          <ul class="userMenu-search-profiles">
-            <li id="search-profile-template" style="display: none;">
-              <div class="mini-profile-info" data-screen-name="">
-                <a href="#" class="open-profile-modal">
-                  <img class="mini-profile-photo" src="img/grayed_avatar_placeholder_24.png" alt="user-photo"/>
-                  <span class="mini-screen-name">@<b></b></span>
-                  <span class="mini-profile-name"></span>
-                </a>
-                <button class="follow">Follow</button>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-      </li>
-
-
-    </ul>
-  </nav>
-  <!-- MENU SUPERIOR END -->
-
-
+     </div>
+  <!-- MENU SUPERIOR END Original -->
   <div class="wrapper">
 
   <!-- LADO ESQUERDO DE MÓDULOS INIT --> 
     <div class="following">
-      <h2> Following </h2>
+<!--       <h2> Following </h2> -->
 
       <div class="postboard-loading" style="display: none;">
             <div></div>
@@ -135,7 +126,6 @@
                             <li class="mentions-from-user">Display mentions to @
                                 <b class="following-screen-name"></b>
                             </li>
-                            <li>Display retransmissions</li>
                         </ul>
                     </div>
                     <button class="unfollow">Unfollow</button>
@@ -204,6 +194,7 @@
                 <i class="post-retransmited-icon"></i>
                 <span>twisted again by</span>
                 <a class="post-retransmited-by open-profile-modal" href=""></a>
+                
             </div>
             <span class="post-expand">Expand</span>
             <!-- elementos de interação com o post que são exibidos no hover -->
@@ -222,8 +213,6 @@
                         <!-- use "avatar-row-template" here -->
                     </li>
                 </ul>
-                <div class="preview-container">
-                </div>
                 <div class="post-reply-content" style="display: block;">
                     <form class="post-area-new">
                         <textarea placeholder="Reply..."></textarea>
@@ -347,7 +336,7 @@
               <img class="profile-card-photo" src="img/grayed_avatar_placeholder_24.png"/>
               <h1 class="profile-name"></h1>
               <h2 class="profile-screen-name">@<b></b></h2>
-              <div class="profile-contact">
+              <div>
                 <span class="profile-location"></span>
                 <a class="profile-url" rel="nofollow" target="_blank"></a>
               </div>

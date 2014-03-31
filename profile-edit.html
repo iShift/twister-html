@@ -2,14 +2,15 @@
   <head>
     <meta charset="utf-8">
     <title>Edit profile</title>
-    <link id="stylecss" rel="stylesheet" href="css/style.css" type="text/css">
-    <link id="profilecss" rel="stylesheet" href="css/profile.css" type="text/css">
+    <link id="stylecss" rel="stylesheet" href="css/style.css">
+    <link id="profilecss" rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="jquery-emotions/jquery.emotions.calm.css">
     <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/qrcode.js"></script>
     <script src="js/jQueryPlugins.js"></script>
     <script src="js/jquery.json-2.4.js"></script>
     <script src="js/jquery.jsonrpcclient.js"></script>
     <script src="js/jquery.storageapi.js"></script>
-    <script src="js/options.js"></script>
     <script src="js/mobile_abstract.js"></script>
     <script src="js/twister_io.js"></script>
     <script src="js/polyglot.min.js"></script>
@@ -23,11 +24,8 @@
     <script src="js/calm.js"></script>
 
     <script>
-        $(document).ready(function()
-        {
-           initProfileEdit();
-        });
-        changeStyle()
+    $(document).ready(function(){initProfileEdit()});
+    changeStyle();
     </script>
 
     <link rel="icon" type="image/png" href="img/twister_mini.png" />
@@ -38,38 +36,18 @@
   <!-- MENU SUPERIOR INIT --> 
   <nav class="userMenu">
     <ul>
-      <li class="userMenu-home"><a href="home.html">Home</a></li>
-      <li class="userMenu-network"><a href="network.html">Network</a></li>
+      <li class="userMenu-home"><a href="home.html"></a></li>
       <li class="userMenu-profile current"><a href="profile-edit.html">Profile</a></li>
       <li class="userMenu-config">
         <a class="userMenu-config-dropdown" href="#">
           <div class="config-menu dialog-modal">
-            <div class="mini-profile-info">
-              <div class="mini-profile-photo"><img src="img/grayed_avatar_placeholder_24.png" alt="user-photo"/></div>
-              <a href="#" class="mini-profile-name">Fulano da Silva</a>
-              <span class="mini-profile-view">View</span>
-            </div>
             <a class="dropdown-menu-item" href="options.html">Options</a>
+            <a class="dropdown-menu-item" href="network.html">Network config</a>
             <a class="dropdown-menu-item" href="profile-edit.html">Setup account</a>
             <a class="dropdown-menu-item" href="following.html">Following users</a>
-            <a class="dropdown-menu-item" href="network.html">Network config</a>
             <a class="dropdown-menu-item" href="login.html">Change user</a>
-            <a class="direct-messages" href="#">Direct Messages</a>
           </div>
         </a>
-      </li>
-      <li class="userMenu-connections">
-        <a href="#">
-          <span class="messages-qtd" style="display:none;">12</span>
-        </a>
-      </li>
-      <li class="userMenu-messages">
-        <a href="#">
-          <span class="messages-qtd" style="display:none;">12</span>
-        </a>
-      </li>
-      <li class="userMenu-search">
-        <input type="text" class="userMenu-search-field" placeholder="search">
       </li>
     </ul>
   </nav>
@@ -81,23 +59,28 @@
   <!-- ÁREA DE PROFILE PHOTO INIT --> 
     <div class="profile-card forEdition">
       <!-- Coloquei a imagem de fundo do card do usuário como background da div abaixo inline na tag para poder ser alterada dinamicamente -->
-      <div class="profile-card-main" style="background: url(img/img.png) no-repeat center center #b43e34;">
+      <div class="profile-card-main">
         <img class="profile-card-photo forEdition" src="img/genericPerson.png"/>
         <input type="text" class="input-name" placeholder="Full name here"/>
         <h2></h2>
         <input type="text" class="input-description" placeholder="Describe yourself"/>
         <input type="text" class="input-city" placeholder="Location"/>
         <input type="text" class="input-website" placeholder="website"/>
+        <input type="text" class="input-tox" placeholder="Tox address"/>
+        <input type="text" class="input-bitmessage" placeholder="Bitmessage address"/>
       </div>
       <div class="profile-edition-buttons">
-          <button class="toggle-priv-key" style="float: left" href="#">Secret Key</button>
+          <button class="toggle-priv-key" style="float: left" href="#">Secret key</button>
           <button class="cancel-changes" href="#">Cancel</button>
           <button class="submit-changes" href="#">Save Changes</button>
       </div>
 
-      <div style="font-size:80%;text-align: center;" class="secret-key-container">
-         <span class="label">Secret key:</span> <span class="secret-key"></span>
+       <div style="font-size:80%;text-align: center;" class="secret-key-container">
+         <span class="label">Secret key:</span> <div id="skey"><span class="secret-key"></span></div>
+                  <button href="#" id="showqr">Show QR code</button>
       </div>
+         
+         <div align="center" id="qrcode"></div>
       
     </div>
     
